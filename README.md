@@ -16,6 +16,13 @@ Examples of monoids you already know:
  - The set of lists, with the append operation, and the element empty list
  - Many domain-specific examples...
 
+In code, monoid elements are Value Objects: immutable and with equality based on their value.
+
+Examples in code:
+ - BigDecimal, BigDecimal.add(BigDecimal): BigDecimal, BigDecimal.ZERO
+ - String, String.concat(String): String, ""
+Note: they often come with a related builder, i.e. StringBuilder, Guava ImmutableList.Builder
+
 The kata
 ========
 
@@ -40,4 +47,9 @@ Using TDD, the following tests progression is suggested:
  1. Average and standard deviation of observations with some missing measurements
  1. Extend the observation to be able to report how it was actually built from each intermediate single or averaged observation (does this remind a monad?)
 
+Note: In .Net, if you use LINQ take care of not being trapped in a local optimization...
 
+Share!
+======
+
+Try it and share your thoughts in the comments below.
