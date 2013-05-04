@@ -1,0 +1,78 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".Types.cs" #>
+<#
+	var types = new[] { "Double", "Single" };
+#>
+using System;
+
+namespace WeatherKata
+{
+<#
+	foreach(var type in types)
+	{
+#>
+    public struct Foldable<#= type #> : IFoldable<<#= type #>>
+    {
+        private readonly <#= type #> value;
+
+        public Foldable<#= type #>(<#= type #> value)
+        {
+            this.value = value;
+        }
+
+        public <#= type #> Value { get { return value; } }
+
+        public IFoldable<<#= type #>> Plus(IFoldable<<#= type #>> other)
+        {
+            return new Foldable<#= type #>(this.value + other.Value);
+        }
+
+		public IFoldable<<#= type #>> Minus(IFoldable<<#= type #>> other)
+        {
+            return new Foldable<#= type #>(this.value - other.Value);
+        }
+
+        public IFoldable<<#= type #>> DividedBy(int ratio)
+        {
+            return new Foldable<#= type #>((<#= type #>)(this.value / (<#= type #>)ratio));
+        }
+
+        public IFoldable<<#= type #>> Squared()
+        {
+            return new Foldable<#= type #>(this.value * this.value);
+        }
+
+        public IFoldable<<#= type #>> GetSquareRoot()
+        {
+            return new Foldable<#= type #>((<#= type #>)Math.Sqrt((double)value));
+        }
+
+		public override string ToString()
+        {
+            return this.value.ToString();
+        }
+    }
+
+<#
+	}
+#>
+    public partial class Fold
+    {
+<#
+	foreach(var type in types)
+	{
+#>
+        private IFoldable<<#= type #>> BuildFrom(<#= type #> value)
+        {
+            return new Foldable<#= type #>(value);
+        }
+
+<#
+	}
+#>
+    }
+}
