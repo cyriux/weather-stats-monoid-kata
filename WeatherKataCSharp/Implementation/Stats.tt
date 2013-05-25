@@ -1,0 +1,95 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".DataTypes.cs" #>
+<#
+	var types = new[] {
+		new { Name = "Temperature", Type = "double" },
+		new { Name = "Humidity", Type = "double" },
+		new { Name = "Precipitations", Type = "double" },
+		new { Name = "Pressure", Type = "float" }
+	};
+#>
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace WeatherKata
+{
+	public enum DataType
+    {
+<#
+	foreach(var dataType in types)
+	{
+#>
+		<#= dataType.Name #>,
+<#
+	}
+#>
+	}
+
+	public abstract partial class WeatherStat
+	{
+<#
+	foreach(var dataType in types)
+	{
+#>
+		public static WeatherStat<<#= dataType.Type #>> <#= dataType.Name #>(<#= dataType.Type #> value)
+        {
+            return new UnitStat<<#= dataType.Type #>>(DataType.<#= dataType.Name #>, value);
+        }
+
+<#
+	}
+#>
+	}
+
+	public partial class StatsCollection
+    {
+<#
+	foreach(var dataType in types)
+	{
+#>
+        public <#= dataType.Type #>? <#= dataType.Name #>
+        {
+            get
+            {
+                return this.stats
+                    .Where(s => s.DataType == DataType.<#= dataType.Name #>)
+                    .Cast<WeatherStat<<#= dataType.Type #>>>()
+                    .Select(s => (<#= dataType.Type #>?)s.Value)
+                    .SingleOrDefault();
+            }
+        }
+
+        public <#= dataType.Type #>? <#= dataType.Name #>StandardDeviation
+        {
+            get
+            {
+                return this.stats
+                    .Where(s => s.DataType == DataType.<#= dataType.Name #>)
+                    .Cast<WeatherStat<<#= dataType.Type #>>>()
+                    .Select(s => (<#= dataType.Type #>?)s.StandardDeviation)
+                    .SingleOrDefault();
+            }
+        }
+
+		public string <#= dataType.Name #>ConstructionTrace
+        {
+            get
+            {
+                return this.stats
+                    .Where(s => s.DataType == DataType.<#= dataType.Name #>)
+                    .Cast<WeatherStat<<#= dataType.Type #>>>()
+                    .Select(s => s.ConstructionTrace)
+                    .SingleOrDefault();
+            }
+        }
+
+<#
+	}
+#>
+    }
+}
